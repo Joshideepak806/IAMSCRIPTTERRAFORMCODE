@@ -1,0 +1,500 @@
+provider "aws" {
+    region = "us-west-2"
+  
+}
+
+## Lambda_execution Role
+
+resource "aws_iam_role" "lambda_execution" {
+  name = "lambada_execution"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "lambda_edge_execution" {
+  name        = "AWSLambdaEdgeExecutionRole-4784a288-5e36-4638-9c9c-82aaac14eef4"
+  description = "Lambda Edge Execution Policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = [
+          "arn:aws:logs:*:*:*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_lambda_edge_policy" {
+  role       = aws_iam_role.lambda_execution.name
+  policy_arn = aws_iam_policy.lambda_edge_execution.arn
+}
+
+## Organization Account Access Role
+
+resource "aws_iam_role" "organization_account_access_role" {
+  name = "OrganizationAccountAccessRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "organizations.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_admin_policy" {
+  role       = aws_iam_role.organization_account_access_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+# Lambda_execution_slz
+
+# Lambda_execution_slz
+
+# IAM Role
+resource "aws_iam_role" "lambda_execution_slz" {
+  name = "lambda_execution-slz"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# Attach the AWS Managed Policy `AdministratorAccess`
+resource "aws_iam_role_policy_attachment" "attach_admin_policy_slz" {
+  role       = aws_iam_role.lambda_execution_slz.name
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
+# Attach the custom policy to the role
+resource "aws_iam_role_policy_attachment" "attach_lambda_edge_policy_slz" {
+  role       = aws_iam_role.lambda_execution_slz.name
+  policy_arn = aws_iam_policy.lambda_edge_execution.arn
+}
+
+## IAM ROle for AWSServiceRoleForVPCTransitGateway
+
+resource "aws_iam_role" "service_role_for_vpc_transit_gateway" {
+  name = "ServiceRoleForVPCTransitGateway"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "transitgateway.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+## Service Role for SSO
+
+resource "aws_iam_role" "service_role_for_sso" {
+  name = "ServiceRoleForSSO"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "sso.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+## Service Role for Trusted Advisor
+
+resource "aws_iam_role" "service_role_for_trusted_advisor" {
+  name = "ServiceRoleForTrustedAdvisor"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "trustedadvisor.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+## name = "ServiceRoleForSecurityHub" 
+
+resource "aws_iam_role" "service_role_for_security_hub" {
+  name = "ServiceRoleForSecurityHub"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "securityhub.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+## Service Role For Organizations
+
+resource "aws_iam_role" "service_role_for_organizations" {
+  name = "ServiceRoleForOrganizations"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "organizations.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+## IAM role ServiceRoleForLakeFormation
+
+resource "aws_iam_role" "service_role_for_lake_formation" {
+  name = "ServiceRoleForLakeFormation"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lakeformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+## IAM Role for AWSServiceRoleForNetworkFirewall
+
+resource "aws_iam_role" "service_role_for_network_firewall" {
+  name = "ServiceRoleForNetworkFirewall"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "network-firewall.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+# AWSServiceRoleForElasticLoadBalancing
+resource "aws_iam_role" "service_role_for_elb" {
+  name = "ServiceRoleForElasticLoadBalancing"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "elasticloadbalancing.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForConfigConforms
+resource "aws_iam_role" "service_role_for_config_conforms" {
+  name = "ServiceRoleForConfigConforms"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "config-conforms.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForConfig
+resource "aws_iam_role" "service_role_for_config" {
+  name = "ServiceRoleForConfig"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "config.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForCloudTrail
+resource "aws_iam_role" "service_role_for_cloudtrail" {
+  name = "ServiceRoleForCloudTrail"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForCloudFormationStackSetsOrgMember
+resource "aws_iam_role" "service_role_for_cf_stacksets_org_member" {
+  name = "ServiceRoleForCloudFormationStackSetsOrgMember"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForCertificateManager
+resource "aws_iam_role" "service_role_for_certificate_manager" {
+  name = "ServiceRoleForCertificateManager"
+
+
+assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForAmazonSSM
+resource "aws_iam_role" "service_role_for_ssm" {
+  name = "ServiceRoleForAmazonSSM"
+
+assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForAmazonMacie
+resource "aws_iam_role" "service_role_for_macie" {
+  name = "ServiceRoleForAmazonMacie"
+  
+assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# AWSServiceRoleForAmazonInspector2
+resource "aws_iam_role" "service_role_for_inspector2" {
+  name = "ServiceRoleForAmazonInspector2"
+  
+assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+# AWSServiceRoleForAmazonGuardDutyMalwareProtection
+resource "aws_iam_role" "service_role_for_guardduty_malware_protection" {
+  name = "ServiceRoleForAmazonGuardDutyMalwareProtection"
+  
+assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+# AWSServiceRoleForAmazonGuardDuty
+resource "aws_iam_role" "service_role_for_guardduty" {
+  name = "ServiceRoleForAmazonGuardDuty"
+  
+ assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+# AWSServiceRoleForAccessAnalyzer
+resource "aws_iam_role" "service_role_for_access_analyzer" {
+  name = "ServiceRoleForAccessAnalyzer"
+  
+assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudformation.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+# AWSControlTower_VPCFlowLogsRole
+resource "aws_iam_role" "controltower_vpc_flow_logs_role" {
+  name = "ControlTower_VPCFlowLogsRole"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "vpc-flow-logs.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+# AmazonEC2RoleforSSM
+resource "aws_iam_role" "ec2_role_for_ssm" {
+  name = "AmazonEC2RoleforSSM"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
